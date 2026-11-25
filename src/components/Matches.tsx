@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom'
 import { CalendarDays, Trophy, Tv } from 'lucide-react'
 import Reveal from './Reveal'
 import LoadingBlock from './LoadingBlock'
-import { getMatches, type ApiMatch } from '../data/getMatches'
+import { getMatches } from '../data/getMatches'
 
 type Match = {
   id: number | string
   title: string
   teamA: string
   teamB: string
-  crestA?: string
-  crestB?: string
+  teamACrest?: string
+  teamBCrest?: string
   date: string
   day: string
   time: string
@@ -42,31 +42,28 @@ function getStatus(iso: string, now: number): { live: boolean; text: string } {
   return { live: false, text: `يبدأ بعد ${Math.floor(hours / 24)} يوم` }
 }
 
+// شعار الفريق، ولو ما اتحمّلش بنعرض أول حرف من الاسم
 function TeamBadge({ name, crest }: { name: string; crest?: string }) {
-  // لو الشعار مفيش أو فشل تحميله، بنرجع لأول حرف من اسم الفريق
   const [failed, setFailed] = useState(false)
-  const showCrest = Boolean(crest) && !failed
 
   return (
     <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-36">
-      <div
-        className={
-          'flex size-14 items-center justify-center rounded-full border border-gold/60 shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16 ' +
-          (showCrest ? 'bg-cream' : 'bg-night text-2xl font-bold text-gold')
-        }
-      >
-        {showCrest ? (
+      {crest && !failed ? (
+        <div className="flex size-14 items-center justify-center rounded-full bg-cream/95 p-2 shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16">
           <img
             src={crest}
             alt=""
             loading="lazy"
+            referrerPolicy="no-referrer"
             onError={() => setFailed(true)}
-            className="size-9 object-contain sm:size-10"
+            className="size-full object-contain"
           />
-        ) : (
-          name.charAt(0)
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex size-14 items-center justify-center rounded-full border border-gold/60 bg-night text-2xl font-bold text-gold shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16">
+          {name.charAt(0)}
+        </div>
+      )}
       <span className="text-sm font-bold sm:text-lg">{name}</span>
     </div>
   )
@@ -85,8 +82,11 @@ function Matches() {
   }, [])
 
   useEffect(() => {
+    let cancelled = false
+
     getMatches()
-      .then((list: ApiMatch[]) => {
+      .then((list) => {
+        if (cancelled) return
         const mapped: Match[] = list.map((m) => {
           const date = new Date(m.utcDate)
           return {
@@ -94,8 +94,8 @@ function Matches() {
             title: competitionNames[m.competition.code] ?? m.competition.name,
             teamA: m.homeTeam.shortName || m.homeTeam.name,
             teamB: m.awayTeam.shortName || m.awayTeam.name,
-            crestA: m.homeTeam.crest,
-            crestB: m.awayTeam.crest,
+            teamACrest: m.homeTeam.crest,
+            teamBCrest: m.awayTeam.crest,
             date: m.utcDate,
             day: date.toLocaleDateString('ar-EG', {
               weekday: 'long',
@@ -113,10 +113,17 @@ function Matches() {
         if (mapped.length > 0) setMatches(mapped)
       })
       .catch((err) => {
+        if (cancelled) return
         console.error(err)
         setError(true)
       })
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const competitions = Array.from(new Set(matches.map((m) => m.title)))
@@ -219,7 +226,7 @@ function Matches() {
                     return (
                       <Reveal key={m.id} delay={i * 0.08}>
                         <div className="flex items-center justify-between gap-2 rounded-2xl border border-gold/30 bg-brown/70 p-4 transition duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_0_35px_rgba(217,164,91,0.3)] sm:p-6">
-                          <TeamBadge name={m.teamA} crest={m.crestA} />
+                          <TeamBadge name={m.teamA} crest={m.teamACrest} />
 
                           <div className="flex flex-1 flex-col items-center gap-2 text-center">
                             <span className="rounded-full bg-night/60 px-3 py-0.5 text-xs text-gold-light sm:text-sm">
@@ -241,7 +248,7 @@ function Matches() {
                             )}
                           </div>
 
-                          <TeamBadge name={m.teamB} crest={m.crestB} />
+                          <TeamBadge name={m.teamB} crest={m.teamBCrest} />
                         </div>
                       </Reveal>
                     )
