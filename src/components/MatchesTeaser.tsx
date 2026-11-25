@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Trophy } from 'lucide-react'
 import Reveal from './Reveal'
+import { mergeMatches, type MatchItem } from '../data/manualMatches'
 
 type ApiMatch = {
   id: number
@@ -9,15 +10,6 @@ type ApiMatch = {
   competition: { code: string; name: string }
   homeTeam: { shortName: string; name: string }
   awayTeam: { shortName: string; name: string }
-}
-
-type Item = {
-  id: number
-  title: string
-  teamA: string
-  teamB: string
-  day: string
-  time: string
 }
 
 const competitionNames: Record<string, string> = {
@@ -37,7 +29,7 @@ const COMPETITIONS = 'PL,PD,CL'
 const toDateParam = (d: Date) => d.toISOString().slice(0, 10)
 
 function MatchesTeaser() {
-  const [matches, setMatches] = useState<Item[]>([])
+  const [matches, setMatches] = useState<MatchItem[]>(() => mergeMatches([]).slice(0, 3))
 
   useEffect(() => {
     const from = new Date()
@@ -52,13 +44,14 @@ function MatchesTeaser() {
         return res.json()
       })
       .then((data: { matches: ApiMatch[] }) => {
-        const next = data.matches.slice(0, 3).map((m) => {
+        const mapped: MatchItem[] = data.matches.map((m) => {
           const date = new Date(m.utcDate)
           return {
             id: m.id,
             title: competitionNames[m.competition.code] ?? m.competition.name,
             teamA: m.homeTeam.shortName || m.homeTeam.name,
             teamB: m.awayTeam.shortName || m.awayTeam.name,
+            date: m.utcDate,
             day: date.toLocaleDateString('ar-EG', {
               weekday: 'long',
               day: 'numeric',
@@ -72,7 +65,7 @@ function MatchesTeaser() {
             }),
           }
         })
-        setMatches(next)
+        setMatches(mergeMatches(mapped).slice(0, 3))
       })
       .catch((err) => console.error(err))
   }, [])

@@ -18,8 +18,10 @@ import Contact from './components/Contact'
 import NotFound from './components/NotFound'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
-import ScrollToTop from './components/ScrollToTop'
 import Loader from './components/Loader'
+import CartBar from './components/CartBar'
+import QrPage from './components/QrPage'
+import { Analytics } from '@vercel/analytics/react'
 
 const titles: Record<string, string> = {
   '/': 'ليالي القاهرة | Cairo Nights 969AD',
@@ -28,6 +30,7 @@ const titles: Record<string, string> = {
   '/gallery': 'معرض الصور | ليالي القاهرة',
   '/about': 'حكايتنا | ليالي القاهرة',
   '/contact': 'تواصل معانا واحجز طاولتك | ليالي القاهرة',
+  '/qr': 'باركود المنيو | ليالي القاهرة',
 }
 
 function App() {
@@ -89,12 +92,14 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/qr" element={<QrPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.main>
       <Footer />
       <WhatsAppButton />
-      <ScrollToTop />
+      <CartBar />
+      <Analytics />
     </>
   )
 }
