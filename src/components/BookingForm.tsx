@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Calendar,
   CalendarCheck,
@@ -7,6 +8,7 @@ import {
   Minus,
   Plus,
   Sparkles,
+  Trophy,
   User,
   Users,
   type LucideIcon,
@@ -17,6 +19,9 @@ const occasions = ['سهرة عادية', 'نتفرج على ماتش', 'عيد 
 
 const toLocalISO = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+const isDate = (v: string | null) => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v)
+const isTime = (v: string | null) => !!v && /^\d{2}:\d{2}$/.test(v)
 
 const inputClass =
   'w-full rounded-xl border border-gold/30 bg-night/70 py-3 ps-11 pe-4 text-cream outline-none transition placeholder:text-cream/40 focus:border-gold focus:shadow-[0_0_18px_rgba(217,164,91,0.25)] [color-scheme:dark]'
@@ -38,12 +43,20 @@ function BookingForm() {
   const tomorrow = new Date()
   tomorrow.setDate(today.getDate() + 1)
 
+  // لو جاي من زرار "احجز للماتش" بنملا الفورم بالماتش واليوم والساعة
+  const [params] = useSearchParams()
+  const matchName = (params.get('match') ?? '').slice(0, 80)
+  const fromDate = params.get('date')
+  const fromTime = params.get('time')
+
   const [name, setName] = useState('')
-  const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
+  const [date, setDate] = useState(() =>
+    isDate(fromDate) && fromDate! >= toLocalISO(today) ? fromDate! : '',
+  )
+  const [time, setTime] = useState(() => (isTime(fromTime) ? fromTime! : ''))
   const [guests, setGuests] = useState(2)
-  const [occasion, setOccasion] = useState('')
-  const [notes, setNotes] = useState('')
+  const [occasion, setOccasion] = useState(matchName ? 'نتفرج على ماتش' : '')
+  const [notes, setNotes] = useState(matchName ? `الماتش: ${matchName}` : '')
 
   const text =
     (setter: (v: string) => void) =>
@@ -85,6 +98,16 @@ function BookingForm() {
       </div>
 
       <div className="space-y-5 px-6 py-6 sm:px-8">
+        {matchName && (
+          <div className="flex items-start gap-3 rounded-xl border border-gold/40 bg-gold/10 px-4 py-3">
+            <Trophy className="mt-0.5 size-5 shrink-0 text-gold" />
+            <div className="text-sm">
+              <p className="font-bold text-gold-light">حجز للماتش: {matchName}</p>
+              <p className="opacity-80">الساعة دي ميعاد بداية الماتش، عدّلها لو عايز تيجي بدري.</p>
+            </div>
+          </div>
+        )}
+
         <Field icon={User} label="الاسم">
           <input className={inputClass} placeholder="اسمك" required value={name} onChange={text(setName)} />
         </Field>

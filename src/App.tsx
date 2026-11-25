@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'motion/react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import NextMatch from './components/NextMatch'
 import Features from './components/Features'
 import MenuHighlights from './components/MenuHighlights'
 import MatchesTeaser from './components/MatchesTeaser'
@@ -73,6 +74,7 @@ function App() {
             element={
               <>
                 <Hero />
+                <NextMatch />
                 <Features />
                 <MenuHighlights />
                 <MatchesTeaser />

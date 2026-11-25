@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CalendarDays, Trophy, Tv } from 'lucide-react'
+import { CalendarCheck, CalendarDays, Trophy, Tv } from 'lucide-react'
 import Reveal from './Reveal'
 import LoadingBlock from './LoadingBlock'
+import TeamCrest from './TeamCrest'
 import { getMatches } from '../data/getMatches'
+import { bookingLink, competitionNames } from '../data/matchHelpers'
 
 type Match = {
   id: number | string
@@ -20,17 +22,6 @@ type Match = {
 // ماتشات يدوية تظهر لو الـ API فشل أو مفيش ماتشات
 const manualMatches: Match[] = []
 
-const competitionNames: Record<string, string> = {
-  PL: 'الدوري الإنجليزي',
-  PD: 'الدوري الإسباني',
-  BL1: 'الدوري الألماني',
-  SA: 'الدوري الإيطالي',
-  FL1: 'الدوري الفرنسي',
-  CL: 'دوري أبطال أوروبا',
-  EC: 'أمم أوروبا',
-  WC: 'كأس العالم',
-}
-
 function getStatus(iso: string, now: number): { live: boolean; text: string } {
   const diff = new Date(iso).getTime() - now
   if (diff <= 0 && diff > -2 * 60 * 60 * 1000) return { live: true, text: 'شغال دلوقتي' }
@@ -42,28 +33,10 @@ function getStatus(iso: string, now: number): { live: boolean; text: string } {
   return { live: false, text: `يبدأ بعد ${Math.floor(hours / 24)} يوم` }
 }
 
-// شعار الفريق، ولو ما اتحمّلش بنعرض أول حرف من الاسم
 function TeamBadge({ name, crest }: { name: string; crest?: string }) {
-  const [failed, setFailed] = useState(false)
-
   return (
     <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-36">
-      {crest && !failed ? (
-        <div className="flex size-14 items-center justify-center rounded-full bg-cream/95 p-2 shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16">
-          <img
-            src={crest}
-            alt=""
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            onError={() => setFailed(true)}
-            className="size-full object-contain"
-          />
-        </div>
-      ) : (
-        <div className="flex size-14 items-center justify-center rounded-full border border-gold/60 bg-night text-2xl font-bold text-gold shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16">
-          {name.charAt(0)}
-        </div>
-      )}
+      <TeamCrest name={name} crest={crest} className="size-14 sm:size-16" />
       <span className="text-sm font-bold sm:text-lg">{name}</span>
     </div>
   )
@@ -225,30 +198,42 @@ function Matches() {
                     const status = getStatus(m.date, now)
                     return (
                       <Reveal key={m.id} delay={i * 0.08}>
-                        <div className="flex items-center justify-between gap-2 rounded-2xl border border-gold/30 bg-brown/70 p-4 transition duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_0_35px_rgba(217,164,91,0.3)] sm:p-6">
-                          <TeamBadge name={m.teamA} crest={m.teamACrest} />
+                        <div className="overflow-hidden rounded-2xl border border-gold/30 bg-brown/70 transition duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_0_35px_rgba(217,164,91,0.3)]">
+                          <div className="flex items-center justify-between gap-2 p-4 sm:p-6">
+                            <TeamBadge name={m.teamA} crest={m.teamACrest} />
 
-                          <div className="flex flex-1 flex-col items-center gap-2 text-center">
-                            <span className="rounded-full bg-night/60 px-3 py-0.5 text-xs text-gold-light sm:text-sm">
-                              {m.title}
-                            </span>
-                            <span className="text-2xl font-bold text-gold sm:text-4xl">{m.time}</span>
-                            {status.live ? (
-                              <span className="flex items-center gap-1.5 text-sm font-bold text-red-400">
-                                <span className="relative flex size-2.5">
-                                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75" />
-                                  <span className="relative inline-flex size-2.5 rounded-full bg-red-500" />
+                            <div className="flex flex-1 flex-col items-center gap-2 text-center">
+                              <span className="rounded-full bg-night/60 px-3 py-0.5 text-xs text-gold-light sm:text-sm">
+                                {m.title}
+                              </span>
+                              <span className="text-2xl font-bold text-gold sm:text-4xl">{m.time}</span>
+                              {status.live ? (
+                                <span className="flex items-center gap-1.5 text-sm font-bold text-red-400">
+                                  <span className="relative flex size-2.5">
+                                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75" />
+                                    <span className="relative inline-flex size-2.5 rounded-full bg-red-500" />
+                                  </span>
+                                  LIVE
                                 </span>
-                                LIVE
-                              </span>
-                            ) : (
-                              <span className="rounded-full bg-gold/15 px-3 py-0.5 text-xs font-bold text-gold-light sm:text-sm">
-                                {status.text}
-                              </span>
-                            )}
+                              ) : (
+                                <span className="rounded-full bg-gold/15 px-3 py-0.5 text-xs font-bold text-gold-light sm:text-sm">
+                                  {status.text}
+                                </span>
+                              )}
+                            </div>
+
+                            <TeamBadge name={m.teamB} crest={m.teamBCrest} />
                           </div>
 
-                          <TeamBadge name={m.teamB} crest={m.teamBCrest} />
+                          {status.text !== 'خلص' && (
+                            <Link
+                              to={bookingLink(m.teamA, m.teamB, m.date)}
+                              className="flex items-center justify-center gap-2 border-t border-gold/20 bg-night/40 py-2.5 text-sm font-bold text-gold transition hover:bg-gold hover:text-night"
+                            >
+                              <CalendarCheck className="size-4" />
+                              احجز طاولتك للماتش ده
+                            </Link>
+                          )}
                         </div>
                       </Reveal>
                     )
