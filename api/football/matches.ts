@@ -1,3 +1,6 @@
+// بنعرّف process هنا عشان Vercel وهو بيبني الـ function ما يشتكيش إنه مش لاقي أنواع Node
+declare const process: { env: Record<string, string | undefined> }
+
 const API = 'https://api.football-data.org/v4/matches'
 
 const isDate = (v: string | null) => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v)
