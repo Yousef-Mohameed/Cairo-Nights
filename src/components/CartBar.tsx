@@ -11,14 +11,14 @@ function CartBar() {
 
   if (count === 0) return null
 
-  const dec = (name: string) => {
+  const dec = (key: string) => {
     const isLast = lines.length === 1 && lines[0].qty === 1
-    removeItem(name)
+    removeItem(key)
     if (isLast) setOpen(false)
   }
 
   const send = () => {
-    const body = lines.map((l) => `- ${l.name} × ${l.qty} = ${l.qty * l.price} ج.م`).join('\n')
+    const body = lines.map((l) => `- ${l.label} × ${l.qty} = ${l.qty * l.price} ج.م`).join('\n')
     const msg =
       `طلب جديد من الموقع:\n${body}\nالإجمالي: ${total} ج.م` +
       (place.trim() ? `\nالمكان: ${place.trim()}` : '') +
@@ -63,15 +63,15 @@ function CartBar() {
 
             <div className="space-y-3">
               {lines.map((l) => (
-                <div key={l.name} className="flex items-center justify-between gap-3 rounded-xl bg-night/50 p-3">
+                <div key={l.key} className="flex items-center justify-between gap-3 rounded-xl bg-night/50 p-3">
                   <div>
-                    <p className="font-bold">{l.name}</p>
+                    <p className="font-bold">{l.label}</p>
                     <p className="text-sm text-gold-light">{l.qty * l.price} ج.م</p>
                   </div>
-                  <div className="flex items-center gap-3 rounded-full border border-gold/40 p-1">
+                  <div className="flex shrink-0 items-center gap-3 rounded-full border border-gold/40 p-1">
                     <button
                       aria-label="قلّل"
-                      onClick={() => dec(l.name)}
+                      onClick={() => dec(l.key)}
                       className="flex size-8 cursor-pointer items-center justify-center rounded-full bg-gold/15 text-gold hover:bg-gold hover:text-night"
                     >
                       <Minus className="size-4" />
@@ -79,7 +79,9 @@ function CartBar() {
                     <span className="min-w-5 text-center font-bold">{l.qty}</span>
                     <button
                       aria-label="زوّد"
-                      onClick={() => addItem(l.name, l.price)}
+                      onClick={() =>
+                        addItem({ id: l.itemId, label: l.label, price: l.price, option: l.option })
+                      }
                       className="flex size-8 cursor-pointer items-center justify-center rounded-full bg-gold/15 text-gold hover:bg-gold hover:text-night"
                     >
                       <Plus className="size-4" />

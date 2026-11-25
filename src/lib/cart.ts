@@ -1,9 +1,26 @@
 import { useMemo, useSyncExternalStore } from 'react'
 
-export type CartLine = { name: string; price: number; qty: number }
+export type CartLine = {
+  key: string
+  itemId: string
+  label: string
+  price: number
+  qty: number
+  option?: string
+}
+
+export type CartInput = {
+  id: string
+  label: string
+  price: number
+  option?: string
+}
+
 type CartState = Record<string, CartLine>
 
-const KEY = 'cn-cart'
+const KEY = 'cn-cart-v2'
+
+export const cartKey = (id: string, option?: string) => `${id}|${option ?? ''}`
 
 function load(): CartState {
   try {
@@ -40,17 +57,28 @@ function commit(next: CartState) {
   listeners.forEach((l) => l())
 }
 
-export function addItem(name: string, price: number) {
-  const line = state[name]
-  commit({ ...state, [name]: { name, price, qty: (line?.qty ?? 0) + 1 } })
+export function addItem(input: CartInput) {
+  const key = cartKey(input.id, input.option)
+  const line = state[key]
+  commit({
+    ...state,
+    [key]: {
+      key,
+      itemId: input.id,
+      label: input.label,
+      price: input.price,
+      option: input.option,
+      qty: (line?.qty ?? 0) + 1,
+    },
+  })
 }
 
-export function removeItem(name: string) {
-  const line = state[name]
+export function removeItem(key: string) {
+  const line = state[key]
   if (!line) return
   const next = { ...state }
-  if (line.qty <= 1) delete next[name]
-  else next[name] = { ...line, qty: line.qty - 1 }
+  if (line.qty <= 1) delete next[key]
+  else next[key] = { ...line, qty: line.qty - 1 }
   commit(next)
 }
 
