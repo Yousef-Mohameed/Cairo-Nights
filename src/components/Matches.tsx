@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { CalendarDays, Trophy, Tv } from 'lucide-react'
 import Reveal from './Reveal'
 import LoadingBlock from './LoadingBlock'
+import { getMatches, type ApiMatch } from '../data/getMatches'
 
 type Match = {
   id: number | string
@@ -12,14 +13,6 @@ type Match = {
   date: string
   day: string
   time: string
-}
-
-type ApiMatch = {
-  id: number
-  utcDate: string
-  competition: { code: string; name: string }
-  homeTeam: { shortName: string; name: string }
-  awayTeam: { shortName: string; name: string }
 }
 
 // ماتشات يدوية تظهر لو الـ API فشل أو مفيش ماتشات
@@ -35,11 +28,6 @@ const competitionNames: Record<string, string> = {
   EC: 'أمم أوروبا',
   WC: 'كأس العالم',
 }
-
-// اكتب هنا البطولات اللي الكافيه بيعرضها بس
-const COMPETITIONS = 'PL,PD,CL'
-
-const toDateParam = (d: Date) => d.toISOString().slice(0, 10)
 
 function getStatus(iso: string, now: number): { live: boolean; text: string } {
   const diff = new Date(iso).getTime() - now
@@ -76,21 +64,9 @@ function Matches() {
   }, [])
 
   useEffect(() => {
-    const from = new Date()
-    const to = new Date()
-    to.setDate(to.getDate() + 7)
-
-    fetch(
-      `/api/football/matches?dateFrom=${toDateParam(from)}&dateTo=${toDateParam(to)}&competitions=${COMPETITIONS}`,
-      // لو السيرفر ما ردش في 10 ثواني نوقف التحميل ونعرض رسالة بدل ما يفضل يلف
-      { signal: AbortSignal.timeout(10000) },
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error('API error ' + res.status)
-        return res.json()
-      })
-      .then((data: { matches: ApiMatch[] }) => {
-        const mapped: Match[] = data.matches.map((m) => {
+    getMatches()
+      .then((list: ApiMatch[]) => {
+        const mapped: Match[] = list.map((m) => {
           const date = new Date(m.utcDate)
           return {
             id: m.id,

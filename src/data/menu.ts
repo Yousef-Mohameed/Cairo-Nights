@@ -131,7 +131,7 @@ export const menu: MenuCategory[] = [
       it('أيس موكا استوائية', 110, 'iced-mocha'),
       it('قهوة ليالي القاهرة الاسبيشيال', 110, 'signature-coffee', { popular: true }),
       it('قهوة الخان', 110, 'signature-coffee'),
-      it('بلو أيس لاتيه', 90, 'blue-iced-latte'),
+      it('بلو أيس لاتيه', 90),
       it('قهوة السلطان', 110, 'sparkling-coffee', { note: 'قهوة فوارة صافية' }),
       it('لاتيه عثماني مثلج', 110, 'iced-latte'),
     ],

@@ -2,14 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Trophy } from 'lucide-react'
 import Reveal from './Reveal'
-
-type ApiMatch = {
-  id: number
-  utcDate: string
-  competition: { code: string; name: string }
-  homeTeam: { shortName: string; name: string }
-  awayTeam: { shortName: string; name: string }
-}
+import { getMatches, type ApiMatch } from '../data/getMatches'
 
 type Item = {
   id: number
@@ -31,28 +24,13 @@ const competitionNames: Record<string, string> = {
   WC: 'كأس العالم',
 }
 
-// لازم تبقى نفس البطولات اللي في Matches.tsx
-const COMPETITIONS = 'PL,PD,CL'
-
-const toDateParam = (d: Date) => d.toISOString().slice(0, 10)
-
 function MatchesTeaser() {
   const [matches, setMatches] = useState<Item[]>([])
 
   useEffect(() => {
-    const from = new Date()
-    const to = new Date()
-    to.setDate(to.getDate() + 7)
-
-    fetch(
-      `/api/football/matches?dateFrom=${toDateParam(from)}&dateTo=${toDateParam(to)}&competitions=${COMPETITIONS}`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error('API error ' + res.status)
-        return res.json()
-      })
-      .then((data: { matches: ApiMatch[] }) => {
-        const next = data.matches.slice(0, 3).map((m) => {
+    getMatches()
+      .then((list: ApiMatch[]) => {
+        const next = list.slice(0, 3).map((m) => {
           const date = new Date(m.utcDate)
           return {
             id: m.id,

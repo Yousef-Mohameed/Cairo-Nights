@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 import { Coffee, Lamp, Tv, type LucideIcon } from 'lucide-react'
 import Reveal from './Reveal'
 
-const features: { icon: LucideIcon; title: string; text: string }[] = [
-  { icon: Lamp, title: 'أجواء الفوانيس', text: 'مكان دافي على نور الفوانيس والطوب القديم' },
-  { icon: Coffee, title: 'مشروبات أصيلة', text: 'شاي وقهوة وسحلب بطعم زمان' },
-  { icon: Tv, title: 'ماتشات على الشاشة', text: 'اتفرج على أهم الماتشات وسط الشلة' },
+const features: { icon: LucideIcon; title: string; text: string; to: string }[] = [
+  { icon: Lamp, title: 'أجواء الفوانيس', text: 'مكان دافي على نور الفوانيس والطوب القديم', to: '/gallery' },
+  { icon: Coffee, title: 'مشروبات أصيلة', text: 'شاي وقهوة وسحلب بطعم زمان', to: '/menu' },
+  { icon: Tv, title: 'ماتشات على الشاشة', text: 'اتفرج على أهم الماتشات وسط الشلة', to: '/matches' },
 ]
 
 function Features() {
@@ -29,11 +29,15 @@ function Features() {
           const Icon = f.icon
           return (
             <Reveal key={f.title} delay={i * 0.1} className="h-full">
-              <div className="group h-full rounded-2xl border border-gold/30 bg-brown/70 px-5 py-8 transition duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_0_35px_rgba(217,164,91,0.3)]">
+              <Link
+                to={f.to}
+                aria-label={f.title}
+                className="group block h-full rounded-2xl border border-gold/30 bg-brown/70 px-5 py-8 transition duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_0_35px_rgba(217,164,91,0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              >
                 <Icon className="mx-auto mb-4 size-11 text-gold transition duration-300 group-hover:scale-110" />
                 <h3 className="mb-2 text-lg font-bold text-gold-light">{f.title}</h3>
                 <p className="text-sm opacity-90">{f.text}</p>
-              </div>
+              </Link>
             </Reveal>
           )
         })}

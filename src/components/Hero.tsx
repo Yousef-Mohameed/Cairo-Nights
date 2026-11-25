@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Moon } from 'lucide-react'
 import Reveal from './Reveal'
 import Lantern from './Lantern'
+import heroImg from '../assets/cafe-hero.jpg'
 
 const stars = Array.from({ length: 28 }, (_, i) => ({
   left: `${(i * 37 + 11) % 100}%`,
@@ -19,7 +20,8 @@ function Hero() {
       {/* صورة المكان: على الموبايل خلف الكلام بتختفي لتحت، وعلى الشاشات الكبيرة في الشمال بتتلاشى ناحية النص */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-cover bg-no-repeat opacity-40 [background-image:url('/images/cafe-hero.jpg')] [background-position:88%_center] [mask-image:linear-gradient(to_bottom,black_45%,transparent)] md:right-auto md:w-[55%] md:opacity-60 md:[mask-image:linear-gradient(to_right,black_35%,transparent)]"
+        style={{ backgroundImage: `url(${heroImg})` }}
+        className="pointer-events-none absolute inset-0 bg-cover bg-no-repeat opacity-40 [background-position:88%_center] [mask-image:linear-gradient(to_bottom,black_45%,transparent)] md:right-auto md:w-[55%] md:opacity-60 md:[mask-image:linear-gradient(to_right,black_35%,transparent)]"
       />
 
       {stars.map((s, i) => (
