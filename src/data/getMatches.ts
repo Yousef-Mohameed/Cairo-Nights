@@ -2,8 +2,8 @@ export type ApiMatch = {
   id: number
   utcDate: string
   competition: { code: string; name: string }
-  homeTeam: { shortName: string; name: string }
-  awayTeam: { shortName: string; name: string }
+  homeTeam: { shortName: string; name: string; crest?: string }
+  awayTeam: { shortName: string; name: string; crest?: string }
 }
 
 // اكتب هنا البطولات اللي الكافيه بيعرضها بس

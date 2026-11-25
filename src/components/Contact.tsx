@@ -1,13 +1,17 @@
 import {
   Camera,
+  Clock,
   ExternalLink,
+  MapPin,
   MessageCircle,
+  Navigation,
   Phone,
   type LucideIcon,
 } from 'lucide-react'
 import Reveal from './Reveal'
 import BookingForm from './BookingForm'
 import Lantern from './Lantern'
+import OpenStatus from './OpenStatus'
 import { cafe } from '../data/cafe'
 
 type Action = {
@@ -20,6 +24,10 @@ type Action = {
 }
 
 function Contact() {
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(cafe.address)}&output=embed`
+  const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(cafe.address)}`
+  const hasInfo = cafe.address !== '' || cafe.hours.length > 0
+
   const actions: Action[] = [
     { href: `tel:${cafe.phone}`, icon: Phone, title: 'اتصل بينا', value: cafe.phone, external: false, ltr: true },
     { href: `https://wa.me/${cafe.whatsapp}`, icon: MessageCircle, title: 'واتساب', value: 'كلمنا واحجز بسرعة', external: true },
@@ -79,11 +87,72 @@ function Contact() {
           })}
         </div>
 
-        {/* الحجز */}
-        <div id="booking" className="mx-auto mt-12 max-w-2xl scroll-mt-24">
-          <Reveal>
-            <BookingForm />
-          </Reveal>
+        {/* الحجز + العنوان والخريطة */}
+        <div
+          className={
+            'mx-auto mt-12 grid max-w-5xl items-start gap-6 ' + (hasInfo ? 'lg:grid-cols-2' : '')
+          }
+        >
+          <div id="booking" className="scroll-mt-24">
+            <Reveal>
+              <BookingForm />
+            </Reveal>
+          </div>
+
+          {hasInfo && (
+            <Reveal delay={0.1}>
+              <div className="rounded-3xl border border-gold/30 bg-brown/70 p-6 text-start sm:p-8">
+                <h3 className="font-ruqaa mb-5 text-3xl text-gold">زورنا</h3>
+
+                <div className="space-y-5">
+                  {cafe.address && (
+                    <div className="flex items-start gap-3">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+                        <MapPin className="size-5" />
+                      </span>
+                      <p className="pt-1.5">{cafe.address}</p>
+                    </div>
+                  )}
+
+                  {cafe.hours.length > 0 && (
+                    <div className="flex items-start gap-3">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+                        <Clock className="size-5" />
+                      </span>
+                      <div className="pt-1.5">
+                        {cafe.hours.map((h) => (
+                          <p key={h.days}>
+                            <span className="font-bold text-gold-light">{h.days}:</span> {h.time}
+                          </p>
+                        ))}
+                        <OpenStatus className="mt-2" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {cafe.address && (
+                  <>
+                    <iframe
+                      title="موقع الكافيه"
+                      src={mapSrc}
+                      loading="lazy"
+                      className="mt-6 h-64 w-full rounded-2xl border border-gold/30"
+                    />
+                    <a
+                      href={directions}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-4 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-2.5 font-bold text-night transition hover:scale-105 hover:bg-gold-light"
+                    >
+                      <Navigation className="size-5" />
+                      اتجاهات للكافيه
+                    </a>
+                  </>
+                )}
+              </div>
+            </Reveal>
+          )}
         </div>
       </div>
     </div>

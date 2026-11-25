@@ -10,6 +10,8 @@ type Match = {
   title: string
   teamA: string
   teamB: string
+  crestA?: string
+  crestB?: string
   date: string
   day: string
   time: string
@@ -40,11 +42,30 @@ function getStatus(iso: string, now: number): { live: boolean; text: string } {
   return { live: false, text: `يبدأ بعد ${Math.floor(hours / 24)} يوم` }
 }
 
-function TeamBadge({ name }: { name: string }) {
+function TeamBadge({ name, crest }: { name: string; crest?: string }) {
+  // لو الشعار مفيش أو فشل تحميله، بنرجع لأول حرف من اسم الفريق
+  const [failed, setFailed] = useState(false)
+  const showCrest = Boolean(crest) && !failed
+
   return (
     <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-36">
-      <div className="flex size-14 items-center justify-center rounded-full border border-gold/60 bg-night text-2xl font-bold text-gold shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16">
-        {name.charAt(0)}
+      <div
+        className={
+          'flex size-14 items-center justify-center rounded-full border border-gold/60 shadow-[0_0_18px_rgba(217,164,91,0.25)] sm:size-16 ' +
+          (showCrest ? 'bg-cream' : 'bg-night text-2xl font-bold text-gold')
+        }
+      >
+        {showCrest ? (
+          <img
+            src={crest}
+            alt=""
+            loading="lazy"
+            onError={() => setFailed(true)}
+            className="size-9 object-contain sm:size-10"
+          />
+        ) : (
+          name.charAt(0)
+        )}
       </div>
       <span className="text-sm font-bold sm:text-lg">{name}</span>
     </div>
@@ -73,6 +94,8 @@ function Matches() {
             title: competitionNames[m.competition.code] ?? m.competition.name,
             teamA: m.homeTeam.shortName || m.homeTeam.name,
             teamB: m.awayTeam.shortName || m.awayTeam.name,
+            crestA: m.homeTeam.crest,
+            crestB: m.awayTeam.crest,
             date: m.utcDate,
             day: date.toLocaleDateString('ar-EG', {
               weekday: 'long',
@@ -196,7 +219,7 @@ function Matches() {
                     return (
                       <Reveal key={m.id} delay={i * 0.08}>
                         <div className="flex items-center justify-between gap-2 rounded-2xl border border-gold/30 bg-brown/70 p-4 transition duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_0_35px_rgba(217,164,91,0.3)] sm:p-6">
-                          <TeamBadge name={m.teamA} />
+                          <TeamBadge name={m.teamA} crest={m.crestA} />
 
                           <div className="flex flex-1 flex-col items-center gap-2 text-center">
                             <span className="rounded-full bg-night/60 px-3 py-0.5 text-xs text-gold-light sm:text-sm">
@@ -218,7 +241,7 @@ function Matches() {
                             )}
                           </div>
 
-                          <TeamBadge name={m.teamB} />
+                          <TeamBadge name={m.teamB} crest={m.crestB} />
                         </div>
                       </Reveal>
                     )
