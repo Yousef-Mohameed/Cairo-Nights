@@ -6,8 +6,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ليالي القاهرة | Cairo Nights 969AD</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta name="description" content="ليالي القاهرة: كافيه بطابع القاهرة القديمة. شوف المنيو واحجز طاولتك على واتساب." />
   <link rel="canonical" href="https://cairo-nights.vercel.app/" />
+  <link rel="alternate" hreflang="ar-EG" href="https://cairo-nights.vercel.app/" />
+  <link rel="alternate" hreflang="x-default" href="https://cairo-nights.vercel.app/" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
   <meta name="theme-color" content="#0b0f1a" />
 
@@ -23,16 +26,20 @@
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="شباك مشربية وفانوس على قاهرة المعز ليلًا" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ليالي القاهرة | Cairo Nights 969AD" />
+  <meta name="twitter:description" content="كافيه بطابع القاهرة القديمة. شوف المنيو واحجز طاولتك على واتساب." />
   <meta name="twitter:image" content="https://cairo-nights.vercel.app/images/og-image.jpg" />
 
   <!-- بيانات منظمة لجوجل -->
-  <script type="application/ld+json">
+  <script type="application/ld+json" id="ld-business">
       {
         "@context": "https://schema.org",
         "@type": "CafeOrCoffeeShop",
         "name": "ليالي القاهرة",
         "alternateName": "Cairo Nights 969AD",
         "url": "https://cairo-nights.vercel.app/",
+        "hasMenu": "https://cairo-nights.vercel.app/menu",
+        "inLanguage": "ar-EG",
         "image": "https://cairo-nights.vercel.app/images/og-image.jpg",
         "telephone": "+201000220404",
         "sameAs": [
@@ -48,7 +55,7 @@
     href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700&display=swap"
     rel="stylesheet" />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#0b0f1a" />
+  <link rel="preload" as="image" href="/images/cafe-hero.jpg" fetchpriority="high" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -58,6 +65,14 @@
 
 <body>
   <div id="root"></div>
+  <noscript>
+    <h1>ليالي القاهرة | Cairo Nights 969AD</h1>
+    <p>كافيه بطابع القاهرة القديمة. شوف المنيو، تابع ماتشات الأسبوع، واحجز طاولتك على واتساب.</p>
+    <nav>
+      <a href="/menu">المنيو</a> · <a href="/matches">ماتشات الأسبوع</a> · <a href="/gallery">معرض الصور</a> ·
+      <a href="/about">حكايتنا</a> · <a href="/contact">تواصل واحجز</a>
+    </nav>
+  </noscript>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

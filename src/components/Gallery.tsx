@@ -49,7 +49,7 @@ function Gallery() {
   return (
     <section className="bg-night-soft bg-arabesque px-4 py-14 text-center md:px-5 md:py-[70px]">
       <Reveal>
-        <h2 className="font-ruqaa mb-3 text-[2.2rem] text-gold md:text-[2.8rem]">معرض الصور</h2>
+        <h1 className="font-ruqaa mb-3 text-[2.2rem] text-gold md:text-[2.8rem]">معرض الصور</h1>
         <p className="mb-10">لمحة من المكان والقعدة وأحلى أصناف عندنا</p>
       </Reveal>
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'motion/react'
 import Navbar from './components/Navbar'
@@ -10,52 +10,48 @@ import MatchesTeaser from './components/MatchesTeaser'
 import Reviews from './components/Reviews'
 import GalleryPreview from './components/GalleryPreview'
 import VisitCTA from './components/VisitCTA'
-import Matches from './components/Matches'
-import Menu from './components/Menu'
-import Gallery from './components/Gallery'
-import About from './components/About'
-import Contact from './components/Contact'
-import NotFound from './components/NotFound'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import Loader from './components/Loader'
 import CartBar from './components/CartBar'
-import QrPage from './components/QrPage'
+import Seo from './components/Seo'
 import { Analytics } from '@vercel/analytics/react'
 
-const titles: Record<string, string> = {
-  '/': 'ليالي القاهرة | Cairo Nights 969AD',
-  '/matches': 'ماتشات الأسبوع | ليالي القاهرة',
-  '/menu': 'المنيو | ليالي القاهرة',
-  '/gallery': 'معرض الصور | ليالي القاهرة',
-  '/about': 'حكايتنا | ليالي القاهرة',
-  '/contact': 'تواصل معانا واحجز طاولتك | ليالي القاهرة',
-  '/qr': 'باركود المنيو | ليالي القاهرة',
-}
+// الصفحات الجانبية بتتحمّل لما الزائر يفتحها بس، عشان الصفحة الرئيسية تفتح أسرع
+const Matches = lazy(() => import('./components/Matches'))
+const Menu = lazy(() => import('./components/Menu'))
+const Gallery = lazy(() => import('./components/Gallery'))
+const About = lazy(() => import('./components/About'))
+const Contact = lazy(() => import('./components/Contact'))
+const NotFound = lazy(() => import('./components/NotFound'))
+const QrPage = lazy(() => import('./components/QrPage'))
 
 function App() {
   const location = useLocation()
-
-  // عنوان التبويب بيتغير مع كل صفحة
-  useEffect(() => {
-    document.title = titles[location.pathname] ?? 'الصفحة مش موجودة | ليالي القاهرة'
-  }, [location.pathname])
 
   // لو الرابط فيه #حاجة (زي /contact#booking) نروح للجزء ده، غير كده نطلع لأول الصفحة
   useEffect(() => {
     if (location.hash) {
       const id = decodeURIComponent(location.hash.slice(1))
-      const t = setTimeout(
-        () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-        150,
-      )
-      return () => clearTimeout(t)
+      // الصفحة بتتحمّل بالتدريج، فبنحاول لحد ما الجزء يظهر (لحد 3 ثواني)
+      let tries = 0
+      const t = setInterval(() => {
+        const el = document.getElementById(id)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          clearInterval(t)
+        } else if (++tries > 20) {
+          clearInterval(t)
+        }
+      }, 150)
+      return () => clearInterval(t)
     }
     window.scrollTo(0, 0)
   }, [location.pathname, location.hash])
 
   return (
     <>
+      <Seo />
       <Loader />
       <a
         href="#main"
@@ -71,6 +67,7 @@ function App() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
+        <Suspense fallback={<div className="min-h-[60vh]" />}>
         <Routes location={location}>
           <Route
             path="/"
@@ -95,6 +92,7 @@ function App() {
           <Route path="/qr" element={<QrPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </motion.main>
       <Footer />
       <WhatsAppButton />

@@ -10,11 +10,15 @@ export const cafe = {
   whatsapp: "201000220404",
 
   // اكتب العنوان الحقيقي هنا (بيظهر معاه الخريطة وزرار الاتجاهات)
-  address: "",
+  address: "بنها، القليوبية، مصر",
+  // إحداثيات المكان (بتتستخدم في الخريطة والاتجاهات وجوجل)
+  mapQuery: "30.468945,31.187948",
+  lat: 30.468945,
+  lng: 31.187948,
   // مثال: [{ days: 'كل يوم', time: 'من 4 العصر لـ 2 بعد نص الليل' }]
-  hours: [] as Hours[],
+  hours: [{ days: "كل يوم", time: "مفتوح 24 ساعة" }] as Hours[],
   // مثال: { open: 16, close: 2 } = من 4 العصر لـ 2 بعد نص الليل. سيبه null لو مش عايز علامة "مفتوح دلوقتي"
-  schedule: null as Schedule | null,
+  schedule: { open: 0, close: 24 } as Schedule | null,
   // صاحب المكان: حط صورته في public/images واكتب اسم الملف في photo (مثال: "owner.jpg") عشان الكارت يظهر. سيبه "" لو مفيش صورة
   owner: { name: "", title: "صاحب ليالي القاهرة", photo: "" },
   facebook: "https://www.facebook.com/profile.php?id=61567415765880",

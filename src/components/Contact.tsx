@@ -24,8 +24,8 @@ type Action = {
 }
 
 function Contact() {
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(cafe.address)}&output=embed`
-  const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(cafe.address)}`
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(cafe.mapQuery)}&output=embed`
+  const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(cafe.mapQuery)}`
   const hasInfo = cafe.address !== '' || cafe.hours.length > 0
 
   const actions: Action[] = [

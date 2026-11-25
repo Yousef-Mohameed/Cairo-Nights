@@ -70,7 +70,7 @@ function Menu() {
 
   return (
     <section id="menu" className="bg-night-soft bg-arabesque px-4 py-12 text-center md:px-5 md:py-[70px]">
-      <h2 className="font-ruqaa mb-6 text-[2.2rem] text-gold md:text-[2.6rem]">المنيو</h2>
+      <h1 className="font-ruqaa mb-6 text-[2.2rem] text-gold md:text-[2.6rem]">المنيو</h1>
 
       <div className="relative mx-auto mb-5 max-w-md">
         <Search className="pointer-events-none absolute start-4 top-1/2 size-5 -translate-y-1/2 text-gold" />
