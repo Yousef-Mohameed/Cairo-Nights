@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { Moon } from 'lucide-react'
 import Reveal from './Reveal'
 import Lantern from './Lantern'
-import heroImg from '../assets/cafe-hero.jpg'
 
 const stars = Array.from({ length: 28 }, (_, i) => ({
   left: `${(i * 37 + 11) % 100}%`,
@@ -17,11 +16,14 @@ function Hero() {
       id="home"
       className="relative flex min-h-[calc(100svh-4.1rem)] flex-col items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_30%,#2a2140_0%,#0b0f1a_70%)] px-5 pt-5 pb-5 text-center"
     >
-      {/* صورة المكان: على الموبايل خلف الكلام بتختفي لتحت، وعلى الشاشات الكبيرة في الشمال بتتلاشى ناحية النص */}
+      {/* صورة المكان خلفية للصفحة كلها، وفوقها طبقة غامقة عشان الكلام يبان */}
       <div
         aria-hidden="true"
-        style={{ backgroundImage: `url(${heroImg})` }}
-        className="pointer-events-none absolute inset-0 bg-cover bg-no-repeat opacity-40 [background-position:88%_center] [mask-image:linear-gradient(to_bottom,black_45%,transparent)] md:right-auto md:w-[55%] md:opacity-60 md:[mask-image:linear-gradient(to_right,black_35%,transparent)]"
+        className="pointer-events-none absolute inset-0 bg-cover bg-no-repeat opacity-70 [background-image:url('/images/cafe-hero.jpg')] [background-position:72%_center] md:[background-position:center]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(11,15,26,0.55)_0%,rgba(11,15,26,0.3)_45%,rgba(11,15,26,0.85)_100%)]"
       />
 
       {stars.map((s, i) => (
