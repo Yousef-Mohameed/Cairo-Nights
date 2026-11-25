@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --color-night: #0b0f1a;
+  --color-night-soft: #141a2b;
+  --color-gold: #d9a45b;
+  --color-gold-light: #f0c987;
+  --color-brown: #4a3222;
+  --color-cream: #f5ead9;
+  --font-cairo: 'Cairo', sans-serif;
+  --font-ruqaa: 'Aref Ruqaa', serif;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-twinkle: twinkle 3s ease-in-out infinite;
+  --animate-flicker: flicker 3.2s ease-in-out infinite;
+  --animate-shimmer: shimmer 7s ease-in-out infinite;
+  --animate-loadbar: loadbar 1.2s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-18px) rotate(2deg); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+  }
+  /* وميض نور الفانوس زي الشمعة */
+  @keyframes flicker {
+    0%, 100% { opacity: 0.25; }
+    18% { opacity: 0.5; }
+    32% { opacity: 0.3; }
+    55% { opacity: 0.6; }
+    72% { opacity: 0.28; }
+    88% { opacity: 0.45; }
+  }
+  /* شريط التحميل */
+  @keyframes loadbar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
+  }
+  /* لمعة بتعدّي على العنوان وبعدين بترتاح */
+  @keyframes shimmer {
+    0% { background-position: 100% 0; }
+    55%, 100% { background-position: -100% 0; }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  /* حلقة تركيز واضحة لمن يتنقل بالكيبورد */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+  body {
+    @apply font-cairo text-cream bg-night;
+  }
+}
+@utility bg-arabesque {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23d9a45b' stroke-opacity='0.12' stroke-width='1'%3E%3Cpath d='M40 4 L76 40 L40 76 L4 40 Z'/%3E%3Cpath d='M40 20 L60 40 L40 60 L20 40 Z'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* نص ذهبي بلمعة بتعدّي عليه */
+@utility text-shimmer {
+  background-image: linear-gradient(110deg, #d9a45b 40%, #fff3c4 50%, #d9a45b 60%);
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
