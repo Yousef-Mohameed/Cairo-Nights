@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { Minus, Plus } from 'lucide-react'
 import { menu, type MenuItem } from '../data/menu'
 import { addItem, cartKey, removeItem, useCart } from '../lib/cart'
+import { useFlavor } from '../lib/flavor'
 
 // الأسماء المتكررة (زي براد شاي لفردين / لأربعة) بنضيفلها الملاحظة في الطلب عشان تفرق
 const nameCount: Record<string, number> = {}
@@ -13,10 +13,7 @@ type Props = { item: MenuItem }
 
 function AddToCart({ item }: Props) {
   const { lines } = useCart()
-  const hasOptions = !!item.options && item.options.length > 0
-  const [option, setOption] = useState(hasOptions ? item.options![0] : '')
-
-  const chosen = option || undefined
+  const chosen = useFlavor(item.id, item.options)
   const qty = lines.find((l) => l.key === cartKey(item.id, chosen))?.qty ?? 0
 
   const label =
@@ -27,22 +24,7 @@ function AddToCart({ item }: Props) {
   const input = { id: item.id, label, price: item.price, option: chosen }
 
   return (
-    <div className="mt-3 flex flex-col items-center gap-2">
-      {hasOptions && (
-        <select
-          value={option}
-          onChange={(e) => setOption(e.target.value)}
-          aria-label="اختار النكهة"
-          className="cursor-pointer rounded-full border border-gold/40 bg-night/70 px-3 py-1 text-sm text-cream outline-none focus:border-gold"
-        >
-          {item.options!.map((o) => (
-            <option key={o} value={o}>
-              {o}
-            </option>
-          ))}
-        </select>
-      )}
-
+    <div className="mt-2 mb-3 flex justify-center">
       {qty === 0 ? (
         <button
           onClick={() => addItem(input)}

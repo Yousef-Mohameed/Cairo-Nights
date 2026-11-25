@@ -3,6 +3,7 @@ import { Flame, Search, X } from 'lucide-react'
 import MenuPhoto from './MenuPhoto'
 import AddToCart from './AddToCart'
 import { menu, type MenuCategory, type MenuItem } from '../data/menu'
+import FlavorButtons from './FlavorButtons'
 
 type Active = 'all' | string
 
@@ -42,23 +43,9 @@ function ItemCard({ item, cat }: { item: MenuItem; cat: MenuCategory }) {
           {item.name}
         </h3>
         {item.note && <p className="text-[0.78rem] leading-snug opacity-75 sm:text-sm">{item.note}</p>}
-        {item.options && (
-          <div className={'flex flex-wrap justify-center ' + (wide ? 'gap-1.5 sm:gap-2' : 'gap-1')}>
-            {item.options.map((o) => (
-              <span
-                key={o}
-                className={
-                  'rounded-full border border-gold/40 text-gold-light ' +
-                  (wide ? 'px-3 py-1 text-[0.8rem] sm:text-sm' : 'px-2 py-0.5 text-[0.7rem]')
-                }
-              >
-                {o}
-              </span>
-            ))}
-          </div>
-        )}
-        <p className={'mt-auto pt-1 font-bold text-gold-light ' + (wide ? 'text-lg' : '')}>{item.price} ج.م</p>
+        <FlavorButtons item={item} />
         <AddToCart item={item} />
+        <p className={'mt-auto pt-1 font-bold text-gold-light ' + (wide ? 'text-lg' : '')}>{item.price} ج.م</p>
       </div>
     </div>
   )
