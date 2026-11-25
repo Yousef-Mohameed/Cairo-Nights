@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { cafe } from '../data/cafe'
+import InstallButton from './InstallButton'
 
 function Footer() {
   return (
@@ -18,6 +19,7 @@ function Footer() {
         {cafe.instagram && <a href={cafe.instagram} target="_blank" rel="noreferrer" className="hover:text-gold">إنستجرام</a>}
         <a href={`tel:${cafe.phone}`} dir="ltr" className="hover:text-gold">{cafe.phone}</a>
       </div>
+      <InstallButton />
       <p className="text-xs opacity-60">
         © {new Date().getFullYear()} {cafe.name}. كل الحقوق محفوظة.
       </p>
